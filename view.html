@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posts and Comments</title>
+    <script src="main.js" defer></script>
+    <style>
+        table,
+        thead,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px;
+        }
+        p {
+            display: inline-block;
+            margin: 5px 0;
+        }
+        input {
+            margin-left: 5px;
+        }
+        button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body onload="Load()">
+    <div>
+        <h2>Posts</h2>
+        <table>
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>USERID</td>
+                    <td>TITLE</td>
+                    <td>BODY</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody id="postTbody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h2>Comments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Post ID</td>
+                    <td>Name</td>
+                    <td>Email</td>
+                    <td>Body</td>
+                    <td>Action</td>
+                </tr>
+            </thead>
+            <tbody id="commentTbody">
+
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h2>Add New Post or Comment</h2>
+        <div>
+            <p>ID:</p>
+            <input id="id" type="text">
+        </div>
+        <div>
+            <p>USERID:</p>
+            <input id="userid" type="text">
+        </div>
+        <div>
+            <p>TITLE:</p>
+            <input id="title" type="text">
+        </div>
+        <div>
+            <p>BODY:</p>
+            <input id="body" type="text">
+        </div>
+        <div>
+            <p>Post ID:</p>
+            <input id="postId" type="text">
+        </div>
+        <div>
+            <p>Name:</p>
+            <input id="name" type="text">
+        </div>
+        <div>
+            <p>Email:</p>
+            <input id="email" type="text">
+        </div>
+        <div>
+            <p>Comment Body:</p>
+            <input id="commentBody" type="text">
+        </div>
+        <button onclick="Save()">SAVE</button>
+    </div>
+
+    <script>
+        // Hàm lưu dữ liệu
+        function Save() {
+            var id = document.getElementById('id').value;
+            var userId = document.getElementById('userid').value;
+            var title = document.getElementById('title').value;
+            var body = document.getElementById('body').value;
+
+            if (id === '') {
+                createPost({ userId: userId, title: title, body: body });
+            } else {
+                updatePost({ userId: userId, title: title, body: body }, id);
+            }
+
+            var postId = document.getElementById('postId').value;
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var commentBody = document.getElementById('commentBody').value;
+
+            if (postId === '') {
+                createComment({ postId: postId, name: name, email: email, body: commentBody });
+            } else {
+                updateComment({ postId: postId, name: name, email: email, body: commentBody }, postId);
+            }
+        }
+
+        // Hàm xóa bài viết
+        function Delete(postId) {
+            deletePost(postId);
+        }
+
+        // Hàm xóa comment
+        function DeleteComment(commentId) {
+            deleteComment(commentId);
+        }
+
+        // Hàm chuyển đổi dữ liệu bài viết thành chuỗi HTML
+        function ConvertFromPostToData(post) {
+            var string = '<tr>';
+            string += '<td>' + post.id + '</td>';
+            string += '<td>' + post.userId + '</td>';
+            string += '<td>' + post.title + '</td>';
+            string += '<td>' + post.body + '</td>';
+            string += '<td><button onclick="Delete(' + post.id + ')">Delete</button></td>';
+            string += '</tr>';
+            return string;
+        }
+
+        // Hàm chuyển đổi dữ liệu comment thành chuỗi HTML
+        function ConvertFromCommentToData(comment) {
+            var string = '<tr>';
+            string += '<td>' + comment.id + '</td>';
+            string += '<td>' + comment.postId + '</td>';
+            string += '<td>' + comment.name + '</td>';
+            string += '<td>' + comment.email + '</td>';
+            string += '<td>' + comment.body + '</td>';
+            string += '<td><button onclick="DeleteComment(' + comment.id + ')">Delete</button></td>';
+            string += '</tr>';
+            return string;
+        }
+
+        // Hàm hiển thị tất cả bài viết
+        function renderPosts(posts) {
+            var tbody = document.getElementById('postTbody');
+            tbody.innerHTML = '';
+            for (var i = 0; i < posts.length; i++) {
+                tbody.innerHTML += ConvertFromPostToData(posts[i]);
+            }
+        }
+
+        // Hàm hiển thị tất cả comments
+        function renderComments(comments) {
+            var tbody = document.getElementById('commentTbody');
+            tbody.innerHTML = '';
+            for (var i = 0; i < comments.length; i++) {
+                tbody.innerHTML += ConvertFromCommentToData(comments[i]);
+            }
+        }
+    </script>
+</body>
+
+</html>
